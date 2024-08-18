@@ -130,7 +130,7 @@ const UserNavigation = () => {
           options={{
             tabBarIcon: ({ focused }) => (
               <TabBarIcon
-                iconName="briefcase"
+                iconName="trophy"
                 label="LeaderBoard"
                 focused={focused}
                 additionalStyle={{ marginLeft: 15 }}

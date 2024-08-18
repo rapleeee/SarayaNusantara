@@ -67,9 +67,9 @@ const MainApp = () => {
           source={item.image}
           style={{
             height: 500,
-            width: screenWidth,
-            marginTop: -120,
-            marginBottom: -140
+            marginTop: -140,
+          width: screenWidth * 1, 
+          resizeMode: 'contain', 
           }}
         />
       </View>
@@ -120,28 +120,33 @@ const MainApp = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#ffff" }}>
       <ScrollView>
         <StatusBar />
-        <View style={styles.card}>
+        <View>
           <Image
-            source={require("./../assets/TanpaBackgroundSaraya.png")}
+            source={require('./../assets/homePage/cardhoem.png')}
             style={{
-              height: 30,
-              width: 30,
-              marginTop: -100,
-              marginHorizontal: -100,
+              marginBottom: 10,
             }}
           />
+          {/* Header Container with Absolute Positioning */}
+          <View style={styles.headerContainer}>
+            <Image
+              source={require("./../assets/homePage/Logo-transparan.png")}
+              style={styles.logo}
+            />
+            <Ionicons
+              name="information-circle"
+              size={24}
+              color="white"
+              style={styles.infoIcon}
+              onPress={() => navigation.navigate("faq")}
+            />
+          </View>
+          {/* Fullname Text with Absolute Positioning */}
+          <View>
+            <Text style={styles.textcard}>Halo, {fullname} !</Text>
+          </View>
         </View>
-        <View>
-          <Text style={styles.textcard}>Halo, {fullname} !</Text>
-          <Ionicons
-            name="information-circle"
-            size={24}
-            color="white"
-            style={{ marginTop: -58, marginLeft: 370 }}
-            onPress={() => navigation.navigate("faq")}
-          />
-        </View>
-        <View>
+        <View style={{marginTop:-10, }}>
           <FlatList
             data={carouselData}
             showsHorizontalScrollIndicator={false}
@@ -156,12 +161,18 @@ const MainApp = () => {
             style={{
               flexDirection: "row",
               justifyContent: "center",
-              marginTop: 20,
+              marginTop: -150,
             }}
           >
             {renderDotIndicators()}
           </View>
         </View>
+
+        <Text style={styles.texth1}>On Going Program</Text>
+        <Image
+          source={require('./../assets/homePage/Group109.png')} style={{marginLeft:20, marginTop:10}}
+        />      
+
         <Text style={styles.texth1}>Program Edukasi</Text>
         <View style={{ flexDirection: "row" }}>
           <Pressable style={styles.boxcontainer} onPress={() => navigation.navigate("ads")}>
@@ -256,18 +267,33 @@ const MainApp = () => {
 export default MainApp;
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#7D0A0A',
-    padding: 120,
-    borderBottomLeftRadius: 60,
-    borderBottomRightRadius: 60,
-    flexDirection: 'row'
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    position: 'absolute',
+    top: 20, // You can adjust this value based on your needs
+    left: 0,
+    right: 0,
+    zIndex: 1,
+  },
+  logo: {
+    height: 40,
+    width: 40,
+    marginLeft:-10,
+    marginTop: 10,
+  },
+  infoIcon: {
+    marginTop: 15,
   },
   textcard: {
-    color: 'white',
-    marginHorizontal: 30,
-    marginTop: -180,
+    color: '#FFFFFF',
     fontSize: 15,
+    position: 'absolute',
+    top: -180, // You can adjust this value based on your needs
+    left: 20,
+    zIndex: 1,
   },
   texth1: {
     fontWeight: 'bold',
