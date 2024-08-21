@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "BridgeCourse",
+    "name": "Saraya",
     "slug": "BridgeCourse",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./App/assets/Logo.png",
     "userInterfaceStyle": "light",
@@ -21,10 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.rapler.sarayaplus"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "26074ca7-fc3b-4c39-8812-333f3de2b790"
+      }
+    },
+    "owner": "rapler"
   }
 }
