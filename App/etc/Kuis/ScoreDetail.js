@@ -3,14 +3,17 @@ import { View, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAuth } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import { Ionicons } from '@expo/vector-icons';
 import { db } from './../../../firebase';
 import tw from 'twrnc';
+import { useNavigation } from '@react-navigation/native';
 
 const ScoreDetail = () => {
   const [scores, setScores] = useState(null);
   const [loading, setLoading] = useState(true);
   const auth = getAuth();
   const user = auth.currentUser;
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchScores = async () => {
@@ -48,6 +51,7 @@ const ScoreDetail = () => {
   return (
     <SafeAreaView>
       <View style={tw`mt-6 p-4`}>
+      <Ionicons name='arrow-back' size={24} onPress={() => navigation.navigate("akun")}/> 
         <Text style={tw`text-2xl mb-4`}>Score Details</Text>
         {scores ? (
           Object.keys(scores).map((quizId) => (

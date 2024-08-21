@@ -1,11 +1,20 @@
-import { View, Text, StyleSheet, Image, FlatList, Dimensions, ScrollView, Pressable } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { auth, db } from '../../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  FlatList,
+  Dimensions,
+  ScrollView,
+  Pressable,
+} from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { auth, db } from "../../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const MainApp = () => {
   const flatListRef = useRef(null);
@@ -13,21 +22,37 @@ const MainApp = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const navigation = useNavigation();
   const [user, setUser] = useState(null);
-  const [fullname, setFullname] = useState('');
+  const [fullname, setFullname] = useState("");
+  const [totalProfit, setTotalProfit] = useState(0); // State to store total profit
 
   useEffect(() => {
     const fetchUserFullname = async (uid) => {
       try {
-        const userDocRef = doc(db, 'users', uid);
+        const userDocRef = doc(db, "users", uid);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setFullname(userData.fullname);
         } else {
-          console.log('No such document!');
+          console.log("No such document!");
         }
       } catch (error) {
-        console.error('Failed to load user data:', error);
+        console.error("Failed to load user data:", error);
+      }
+    };
+
+    const fetchTotalProfit = async (uid) => {
+      try {
+        const profitDocRef = doc(db, "profits", uid); // Adjust this path based on where you store profit data
+        const profitDoc = await getDoc(profitDocRef);
+        if (profitDoc.exists()) {
+          const profitData = profitDoc.data();
+          setTotalProfit(profitData.totalProfit); // Assuming the document contains a 'totalProfit' field
+        } else {
+          console.log("No such document for profit!");
+        }
+      } catch (error) {
+        console.error("Failed to load profit data:", error);
       }
     };
 
@@ -35,6 +60,7 @@ const MainApp = () => {
       if (user) {
         setUser(user);
         fetchUserFullname(user.uid);
+        fetchTotalProfit(user.uid); // Fetch the total profit when user is authenticated
       } else {
         setUser(null);
       }
@@ -43,23 +69,21 @@ const MainApp = () => {
     return () => unsubscribe(); // Unsubscribe on unmount
   }, []);
 
-  // data for carousel
   const carouselData = [
     {
-      id: '01',
-      image: require('./../assets/card2.png'),
+      id: "01",
+      image: require("./../assets/card2.png"),
     },
     {
-      id: '02',
-      image: require('./../assets/card1.png'),
+      id: "02",
+      image: require("./../assets/card1.png"),
     },
     {
-      id: '03',
-      image: require('./../assets/card3.png'),
+      id: "03",
+      image: require("./../assets/card3.png"),
     },
   ];
 
-  // display images UI
   const renderItem = ({ item, index }) => {
     return (
       <View>
@@ -68,8 +92,8 @@ const MainApp = () => {
           style={{
             height: 500,
             marginTop: -140,
-          width: screenWidth * 1, 
-          resizeMode: 'contain', 
+            width: screenWidth * 1,
+            resizeMode: "contain",
           }}
         />
       </View>
@@ -85,10 +109,10 @@ const MainApp = () => {
   const renderDotIndicators = () => {
     return carouselData.map((dot, index) => (
       <View
-        key={index} // Add a unique key to the parent container
+        key={index}
         style={{
-          flexDirection: 'row', // Assuming you want dots in a row
-          alignItems: 'center', // Adjust this based on your layout
+          flexDirection: "row",
+          alignItems: "center",
         }}
       >
         {activeIndex === index ? (
@@ -122,12 +146,11 @@ const MainApp = () => {
         <StatusBar />
         <View>
           <Image
-            source={require('./../assets/homePage/cardhoem.png')}
+            source={require("./../assets/homePage/cardhoem.png")}
             style={{
               marginBottom: 10,
             }}
           />
-          {/* Header Container with Absolute Positioning */}
           <View style={styles.headerContainer}>
             <Image
               source={require("./../assets/homePage/Logo-transparan.png")}
@@ -141,12 +164,19 @@ const MainApp = () => {
               onPress={() => navigation.navigate("faq")}
             />
           </View>
-          {/* Fullname Text with Absolute Positioning */}
+
           <View>
-            <Text style={styles.textcard}>Halo, {fullname} !</Text>
+            <Text style={styles.textcard}>Halo, {fullname}!</Text>
+            <Text style={styles.profitText1}>
+              Dashboard Keuntungan Bulan Ini
+            </Text>
+            {/* <Text style={styles.profitText}>
+              Keuntungan: Rp {totalProfit.toLocaleString("id-ID")}
+            </Text> */}
           </View>
         </View>
-        <View style={{marginTop:-10, }}>
+
+        <View style={{ marginTop: -10 }}>
           <FlatList
             data={carouselData}
             showsHorizontalScrollIndicator={false}
@@ -170,33 +200,43 @@ const MainApp = () => {
 
         <Text style={styles.texth1}>On Going Program</Text>
         <Image
-          source={require('./../assets/homePage/Group109.png')} style={{marginLeft:20, marginTop:10}}
-        />      
+          source={require("./../assets/homePage/Group109.png")}
+          style={{ marginLeft: 20, marginTop: 10 }}
+        />
 
         <Text style={styles.texth1}>Program Edukasi</Text>
         <View style={{ flexDirection: "row" }}>
-          <Pressable style={styles.boxcontainer} onPress={() => navigation.navigate("ads")}>
+          <Pressable
+            style={styles.boxcontainer}
+            onPress={() => navigation.navigate("ads")}
+          >
             <Image
               source={require("./../assets/fund.png")}
               style={styles.imgbox}
             />
-            <Text style={{ textAlign: "center" }} >Adsense</Text>
+            <Text style={{ textAlign: "center" }}>Adsense</Text>
           </Pressable>
-          <Pressable style={styles.boxcontainer} onPress={() => navigation.navigate("sosmed")}>
+          <Pressable
+            style={styles.boxcontainer}
+            onPress={() => navigation.navigate("sosmed")}
+          >
             <Image
               source={require("./../assets/Marketing-pana.png")}
               style={styles.imgbox}
             />
-            <Text style={{ textAlign: "center" }} >Sosial Branding</Text>
+            <Text style={{ textAlign: "center" }}>Sosial Branding</Text>
           </Pressable>
         </View>
         <View style={{ flexDirection: "row" }}>
-          <Pressable style={styles.boxcontainer} onPress={() => navigation.navigate("Keuangan")}>
+          <Pressable
+            style={styles.boxcontainer}
+            onPress={() => navigation.navigate("Keuangan")}
+          >
             <Image
               source={require("./../assets/keu.png")}
               style={styles.imgbox}
             />
-            <Text style={{ textAlign: "center" }} >Laporan Keuangan</Text>
+            <Text style={{ textAlign: "center" }}>Laporan Keuangan</Text>
           </Pressable>
           <View style={styles.boxcontainer}>
             <Image
@@ -206,7 +246,7 @@ const MainApp = () => {
             <Text style={{ textAlign: "center" }}>Mentoring</Text>
           </View>
         </View>
-        <Text style={styles.texth1}>Kelola Keuangan</Text>
+        <Text style={styles.texth1}>Program Saya</Text>
         <View style={{ flexDirection: "row" }}>
           <View style={styles.boxcontainer}>
             <Image
@@ -242,8 +282,26 @@ const MainApp = () => {
                 marginTop: 10,
               }}
             />
-            <Text style={{ textAlign: "center", marginTop: 5, marginLeft: 5, fontWeight: '500' }}>Mengelola Keuangan Ala </Text>
-            <Text style={{ textAlign: "center", marginBottom: 20, marginLeft: 5, fontWeight: '500' }}>Najwa Shihab</Text>
+            <Text
+              style={{
+                textAlign: "center",
+                marginTop: 5,
+                marginLeft: 5,
+                fontWeight: "500",
+              }}
+            >
+              Mengelola Keuangan Ala{" "}
+            </Text>
+            <Text
+              style={{
+                textAlign: "center",
+                marginBottom: 20,
+                marginLeft: 5,
+                fontWeight: "500",
+              }}
+            >
+              Najwa Shihab
+            </Text>
           </View>
           <View>
             <Image
@@ -256,24 +314,38 @@ const MainApp = () => {
                 marginTop: 10,
               }}
             />
-            <Text style={{ textAlign: "center", marginTop: 5, marginLeft: 5, fontWeight: '500' }}>5 Tips Memilih Kredit</Text>
-            <Text style={{ textAlign: "center", marginBottom: 20, marginLeft: 5, fontWeight: '500' }}>Usaha Yang Tetap</Text>
+            <Text
+              style={{ textAlign: "center", marginTop: 5, fontWeight: "500" }}
+            >
+              {" "}
+              Tips Menabung untuk{" "}
+            </Text>
+            <Text
+              style={{
+                textAlign: "center",
+                marginBottom: 20,
+                fontWeight: "500",
+              }}
+            >
+              Anak Muda Masa Kini
+            </Text>
           </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
+
 export default MainApp;
 
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
-    position: 'absolute',
-    top: 20, // You can adjust this value based on your needs
+    position: "absolute",
+    top: 20,
     left: 0,
     right: 0,
     zIndex: 1,
@@ -281,35 +353,51 @@ const styles = StyleSheet.create({
   logo: {
     height: 40,
     width: 40,
-    marginLeft:-10,
+    marginLeft: -10,
     marginTop: 10,
   },
   infoIcon: {
     marginTop: 15,
   },
   textcard: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 15,
-    position: 'absolute',
-    top: -180, // You can adjust this value based on your needs
+    position: "absolute",
+    top: -180,
+    left: 20,
+    zIndex: 1,
+  },
+  profitText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    position: "absolute",
+    top: -100, // Adjust as needed
+    left: 20,
+    zIndex: 1,
+  },
+  profitText1: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    marginLeft:80,
+    top: -140, // Adjust as needed
     left: 20,
     zIndex: 1,
   },
   texth1: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginHorizontal: 20,
-    marginTop: 20
+    marginTop: 20,
   },
   boxcontainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#BCBBBB',
+    borderColor: "#BCBBBB",
     height: 120,
     width: 180,
     marginLeft: 20,
     marginTop: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 111,
@@ -317,12 +405,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    marginBottom: 10
+    marginBottom: 10,
   },
   imgbox: {
     height: 80,
     width: 80,
     marginHorizontal: 45,
     marginTop: 10,
-  }
+  },
 });

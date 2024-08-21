@@ -126,7 +126,7 @@ export default function Akun() {
           <Image source={require("./../assets/Logo.png")} style={styles.logo} />
         </View>
         <Text style={styles.fullName}>{fullname}</Text>
-        <Text style={styles.umkm}>bodanana</Text>
+        <Text style={styles.umkm}>Kopi Konco</Text>
         <View style={styles.classContainer}>
           <Text style={styles.classText}>Elite Ambasador</Text>
         </View>
